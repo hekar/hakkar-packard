@@ -1,0 +1,74 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Repository Structure
+
+Here is our directory structure. At the top level, we have 3 main directories:
+1. .devcontainer
+2. infrastructure
+3. services
+
+## .devcontainer 
+This is the devcontainer setup from which we will be developing our application. The `.devcontainer/docker-compose.yml` has defined the following services that are started automatically: 
+- `app`: This is what vscode connects to and has our code. This is built based on the Dockerfile defined at `.devcontainer/Dockerfile`. It contains development tools including Python, Node.js, dbmate, and other utilities needed for development.
+- `db`: PostgreSQL database service that hosts multiple databases needed for the application, including the main application database and Keycloak database.
+- `keycloak`: Authentication service that provides identity and access management for the application.
+
+Key configuration files include:
+- `devcontainer.json`: Defines the VS Code development environment, extensions, ports to forward, and post-creation setup.
+- `Dockerfile`: Sets up the development container with Python, database clients, dbmate, pyenv, and NVM.
+- `docker-compose.yml`: Orchestrates the services needed for the development environment.
+- `init-databases.sh`: Initializes the PostgreSQL databases during container startup.
+- `post-install.sh`: Runs post-creation setup, installing Python and Node.js dependencies, and configuring Keycloak with a realm, client, and test user.
+
+## services
+The `services/` directory contain the following three subdirectories: 
+1. `db/`
+2. `server/`
+3. `ui/`
+
+### DB
+
+The `db/` directory contains the dbmate-powered migrations and auto-generated schema.sql for reference. The dbmate commands are defined in the @Makefile.
+
+### Server
+
+The `server/` directory contains our Python server built with FastAPI. The server handles API requests from the frontend, interacts with the database, and manages business logic. The server directory contains the following structure:
+
+- `main.py`: The entry point for the FastAPI application, sets up middleware, CORS, and runs database migrations on startup.
+- `pyproject.toml` and `poetry.lock`: Define Python dependencies managed by Poetry.
+- `routes/`: Contains API route definitions and endpoints.
+  - `route_handler.py`: Manages the API router configuration and versioning.
+  - `v1/`: Contains versioned API endpoints.
+- `models/`: Contains Pydantic models for data validation and serialization.
+- `services/`: Contains business logic separated by domain. Each service module encapsulates operations for a specific feature or resource. The code here should be unit testable and from a functional perspective, all mutations should be dependency injected and should either be a repository (e.g., database) or a utility (e.g., random number generator)
+- `repositories/`: Contains external access layer components. These external layer components may be things such as, but not limited to filsystem access, memory access, database access, external API calls, and others. Think of this the place for anything external to the main system. This can have sub directories and should be focussed by type of external interaction rather than be tightly coupled to the service layer. For example, split into directories such as database, temporal, llm, etc.,
+  - `db.py`: Database connection and transaction management.
+  - Other repository modules that handle 
+- `utils/`: Contains utility functions and helpers. 
+  - `env.py`: Environment variable configuration and validation.
+- `tests/`: Contains unit and integration tests for the server components.
+
+The server follows a layered architecture:
+1. Routes receive and validate requests
+2. Services implement business logic 
+3. Repositories handle data access
+4. Models define data structures
+
+This separation of concerns makes the codebase more maintainable and testable.
+
+### UI
+
+The `ui/` directory contains our React code with TypeScript. We are using zustand for our state management, we have shadcn components set up, and we are using Tailwindcss. We have the following sub-directories in the `ui/src/`:
+
+- `components/`
+    - `ui/`: This contains the components defined by shadcn. They are either added manually or generated using the shadcn CLI.
+- `pages/`: This contains the various pages that we have in the react application. The goal here is to not define any business logic or any complex component definition here. All that is meant to be abstracted away in `features/`. The purpose of the `pages/` is a clean and clear organization of what the various pages and sub-pages are as they map to the routes that we have.
+- `features/`: This contains the various features that are referenced and used in other `features/` or other `pages/` in a modular way. State management, type definition, and components are all localized and organized within a feature, but they can be referenced. For example, we have the layout feature that is used throughout.
+- `lib/`
+    - `api/`: contains the API for connecting to the backend.
+        - `core/`: contains the main definition of the client, constants, types, etc. that is referenced by the rest of the API.
+        - other APIs specific to a route that leverage the definition in `lib/api/core/`...
+    - other useful libraries can be defined here...

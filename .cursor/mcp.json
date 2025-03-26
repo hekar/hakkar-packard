@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-postgres postgresql://postgres:postgres@127.0.0.1:5432/postgres_project"
+      ]
+    },
+    "package-docs": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-package-docs"
+      ],
+      "env": {
+        "ENABLE_LSP": "true"
+      }
+    },
+    "git": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-git",
+        "--repository",
+        "."
+      ]
+    }
+  }
+}

@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 12%;
+ 
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 12%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 12%;
+ 
+    --primary: 352 95% 35%; /* Rich red - enhanced #B5001A */
+    --primary-foreground: 0 0% 100%;
+ 
+    --secondary: 352 30% 95%;
+    --secondary-foreground: 352 100% 35%;
+ 
+    --muted: 352 10% 95%;
+    --muted-foreground: 352 30% 40%;
+ 
+    --accent: 352 25% 94%;
+    --accent-foreground: 352 100% 35%;
+ 
+    --destructive: 0 90% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --success: 142 85% 40%; /* Richer success color for healthy status */
+    --success-foreground: 0 0% 100%;
+ 
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 352 95% 40%;
+ 
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 0 0% 10%; /* Pure dark gray (almost black) */
+    --foreground: 0 0% 98%;
+ 
+    --card: 0 0% 13%; /* Slightly lighter dark gray */
+    --card-foreground: 0 0% 100%;
+ 
+    --popover: 0 0% 13%;
+    --popover-foreground: 0 0% 100%;
+ 
+    --primary: 352 100% 60%; /* Vibrant red - #FF0033 */
+    --primary-foreground: 0 0% 100%;
+ 
+    --secondary: 352 30% 15%;
+    --secondary-foreground: 0 0% 100%;
+ 
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 80%;
+ 
+    --accent: 352 40% 20%; /* Richer accent with red undertone */
+    --accent-foreground: 0 0% 100%;
+ 
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --success: 142 100% 45%; /* Vibrant green for dark mode */
+    --success-foreground: 0 0% 100%;
+ 
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 352 100% 60%;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

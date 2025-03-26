@@ -1,0 +1,17 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Your job is to generate a PR title using conventional commit format and generate the PR description. 
+
+Your output should look like the following
+
+**Title**: <title here>
+
+**Description**
+```markdown
+## Changes
+- <change1>
+- ...
+```

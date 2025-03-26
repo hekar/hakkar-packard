@@ -1,0 +1,21 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Implementation Strategy
+
+When implementing, the following steps must be follows:
+
+1. Read all the relevant files through searches, references, imports, etc.
+2. Plan your changes.
+3. State assumptions.
+4. Critical: Ask the user for clarifications if it is needed. Don't continue until you get a response that is satisfactory.
+5. Revise plan (if necessary)
+6. Make changes.
+
+## Dangerous Assumptions to Make
+
+- Assuming that the version of a package you have in your memory is the correct one instead of using the latest. This means that you make the dangerous assumption that you can modify a package manager's dependency file instead of using the appropriate package managers install commands to install the latest version of a package.
+- Assuming that the user is incorrect in chosing a model for making AI calls. Just because your memory tells you that GPT-4 is the latest model, doesn't mean that newer models haven't been released since your training completed. There are newer models available and don't make the dangerous assumption that you should go "fix" something that isn't broken.
+- Making too many changes because you're trained to act like a human that has ADHD. Make small systematic changes to eliminate what might be wrong when fixing an issue. Don't make too many changes and accidentally break things that were once working.
