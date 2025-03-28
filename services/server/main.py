@@ -12,6 +12,7 @@ from utils.env import env
 # Use uvicorn's logger for consistent formatting
 logger = logging.getLogger("uvicorn")
 
+
 # Run database migrations on startup
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -34,12 +35,19 @@ async def lifespan(app: FastAPI):
         # Set schema path to configured location
         schema_path = os.path.join(base_dir, env.schema_file)
         migrations_dir = os.path.join(base_dir, env.migrations_dir)
-        
+
         # Run database migrations
         logger.info(f"Running database migrations from directory: {migrations_dir}")
         logger.info(f"Schema will be updated at: {schema_path}")
         result = subprocess.run(
-            ["dbmate", "--migrations-dir", migrations_dir, "--schema-file", schema_path, "up"],
+            [
+                "dbmate",
+                "--migrations-dir",
+                migrations_dir,
+                "--schema-file",
+                schema_path,
+                "up",
+            ],
             capture_output=True,
             text=True,
             env=os.environ,
@@ -55,6 +63,7 @@ async def lifespan(app: FastAPI):
 
     yield  # Application execution
     # No cleanup needed
+
 
 app = FastAPI(title="Simple FastAPI Server", lifespan=lifespan)
 
@@ -81,9 +90,4 @@ if __name__ == "__main__":
     import uvicorn
 
     # When running directly with python -m, use the environment settings
-    uvicorn.run(
-        "main:app", 
-        host=env.host, 
-        port=env.port, 
-        reload=env.debug
-    )
+    uvicorn.run("main:app", host=env.host, port=env.port, reload=env.debug)

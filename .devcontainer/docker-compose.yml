@@ -16,7 +16,7 @@ services:
   db:
     image: postgres:17
     networks:
-      - ai-learning-network
+      - postgres-project-network
     restart: unless-stopped
     ports:
       - "5432:5432"
@@ -26,7 +26,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_MULTIPLE_DATABASES: postgres_project,keycloak
+      POSTGRES_MULTIPLE_DATABASES: postgres_project,keycloak,temporal
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -37,7 +37,7 @@ services:
     image: quay.io/keycloak/keycloak:22.0.0
     command: start-dev
     networks:
-      - ai-learning-network
+      - postgres-project-network
     ports:
       - "8080:8080"
     environment:
@@ -51,8 +51,43 @@ services:
       db:
         condition: service_healthy
 
+  temporal:
+    image: temporalio/auto-setup:1.22.3
+    networks:
+      - postgres-project-network
+    ports:
+      - "7233:7233"
+    volumes:
+      - ./temporal-config.yaml:/etc/temporal/config/dynamicconfig/development.yaml
+    environment:
+      - DYNAMIC_CONFIG_FILE_PATH=/etc/temporal/config/dynamicconfig/development.yaml
+      - DB=postgresql
+      - DB_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PWD=postgres
+      - POSTGRES_SEEDS=db
+      - POSTGRES_DB=temporal
+      - AUTO_SETUP=true
+      - TEMPORAL_CREATE_DEFAULT_NAMESPACE=true
+      - TEMPORAL_NAMESPACE_RETENTION=30d
+      - DEFAULT_NAMESPACE_RETENTION=30d
+    depends_on:
+      db:
+        condition: service_healthy
+
+  temporal-ui:
+    image: temporalio/ui:2.22.3
+    networks:
+      - postgres-project-network
+    ports:
+      - "8088:8080"
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+    depends_on:
+      - temporal
+
 networks:
-  ai-learning-network:
+  postgres-project-network:
     driver: bridge
 
 volumes:
