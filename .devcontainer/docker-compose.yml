@@ -40,13 +40,13 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     ports:
-      - "5433:5432"
+      - "5433:5433"
     command: ['postgres', '-c', 'config_file=/etc/postgresql/postgresql.conf']
     volumes:
       - ../data/customer-db:/var/lib/postgresql/data
       - ../services/test-env/docker/postgres.conf:/etc/postgresql/postgresql.conf
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres -p 5432"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres -p 5433"]
       interval: 5s
       timeout: 5s
       retries: 5
