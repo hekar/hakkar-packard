@@ -1,4 +1,4 @@
-.PHONY: help migrate rollback migrate-new run-server run-ui
+.PHONY: help migrate rollback migrate-new run-server run-ui metrum-init metrum-run
 
 # Default target when just running 'make'
 .DEFAULT_GOAL := help
@@ -17,6 +17,8 @@ help: ## Show this help message
 	@printf "\033[1;32mApplication Commands:\033[0m\n"
 	@printf "  \033[1;36mrun-server\033[0m               Start the backend development server\n"
 	@printf "  \033[1;36mrun-ui\033[0m                   Start the frontend development server\n"
+	@printf "  \033[1;36mmetrum-init\033[0m             Initialize the Metrum service\n"
+	@printf "  \033[1;36mmetrum-run\033[0m              Run the Metrum service\n"
 	@echo ""
 	@printf "\033[1;32mDatabase Commands:\033[0m\n"
 	@printf "  \033[1;36mmigrate\033[0m                  Run database migrations\n"
@@ -41,6 +43,11 @@ run-ui: ## Start the frontend development server
 	cd services/ui && \
 	yarn install && \
 	yarn dev --host 0.0.0.0
+
+run-metrum: ## Run the Metrum service
+	@echo "Running Metrum service..."
+	cd services/metrum && \
+	poetry run metrum run
 
 #-------------------------------------------------------
 # Database Commands

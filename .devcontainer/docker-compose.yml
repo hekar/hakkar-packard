@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   app:
     build:
@@ -32,6 +30,29 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  customer-db:
+    image: postgres:17
+    networks:
+      - postgres-project-network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    command: ['postgres', '-c', 'config_file=/etc/postgresql/postgresql.conf']
+    volumes:
+      - ../data/customer-db:/var/lib/postgresql/data
+      - ../services/test-env/docker/postgres.conf:/etc/postgresql/postgresql.conf
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres -p 5432"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
 
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.0

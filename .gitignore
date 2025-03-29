@@ -3,6 +3,7 @@
 .env.local
 .env.*
 !.env.example
+data/
 
 # OS specific files
 .DS_Store

@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "test-env"
+version = "0.1.0"
+description = "A CLI application with Streamlit interface for test database management"
+authors = ["Your Name <your.email@example.com>"]
+packages = [
+    { include = "test_env", from = "src" }
+]
+
+[tool.poetry.dependencies]
+python = "<4.0,>=3.13"
+asyncpg = ">=0.30.0"
+click = ">=8.1.0"
+psycopg = ">=3.2.6"
+streamlit = ">=1.32.0"
+structlog = ">=25.2.0"
+pandas = ">=2.2.0"
+plotly = ">=5.19.0"
+pydantic = "^2.6.0"
+pydantic-settings = "^2.2.0"
+testcontainers = "^4.9.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+ruff = "^0.2.0"
+pytest-asyncio = "^0.23.0"
+pytest-env = "^1.1.0"
+
+[tool.poetry.scripts]
+test-env = "test_env.cli:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = [
+    "uses_testcontainer: marks tests that use testcontainers-python for database testing"
+]
+env = [
+    "TEST_ENV_ENVIRONMENT=testing"
+] 

@@ -1,4 +1,4 @@
-.PHONY: help build test run clean docker-up docker-down docker-logs docker-shell venv install dev-install lint format migrate-db populate-db bench-db run-dev
+.PHONY: help build test run clean venv install dev-install lint format migrate-db populate-db bench-db run-dev run-ui
 
 # Default target
 help:
@@ -8,80 +8,66 @@ help:
 	@echo "  make test         - Run tests"
 	@echo "  make run          - Run the CLI application"
 	@echo "  make run-dev      - Run the CLI application in development mode"
+	@echo "  make run-ui       - Run the Streamlit UI for database management"
 	@echo "  make clean        - Clean build artifacts"
 	@echo "  make venv         - Create virtual environment"
 	@echo "  make install      - Install the package"
 	@echo "  make dev-install  - Install development dependencies"
 	@echo "  make lint         - Run linters"
 	@echo "  make format       - Format code"
-	@echo "  make docker-up    - Start PostgreSQL container in tmux"
-	@echo "  make docker-down  - Stop PostgreSQL container"
-	@echo "  make docker-logs  - View PostgreSQL logs"
-	@echo "  make docker-shell - Open PostgreSQL shell"
 	@echo "  make migrate-db   - Create database schema"
-	@echo "  make populate-db  - Populate database with test data in tmux"
+	@echo "  make populate-db  - Populate database with test data"
 	@echo "  make bench-db     - Run database benchmarks"
 
 # Project setup
 venv:
-	uv venv
-	@echo "Virtual environment created. Activate with: source .venv/bin/activate"
+	poetry env use python3
+	@echo "Virtual environment created. Activate with: poetry shell"
 
 install:
-	uv pip install -e .
+	poetry install
 
 dev-install:
-	uv pip install -e ".[dev]"
+	poetry install --with dev
 
 # Build and test
 build:
-	uv pip install build
-	python -m build
+	poetry build
 
 test:
-	pytest tests/ -v
+	poetry run pytest tests/ -v
 
 run:
-	uv run python test-env --help
+	poetry run python -m test_env --help
+
+run-ui:
+	@echo "Starting Streamlit UI..."
+	poetry run streamlit run src/test_env/app.py --server.port 8501
 
 # Development tools
 lint:
-	ruff check .
-	ruff format --check .
+	poetry run ruff check .
+	poetry run ruff format --check .
+
+lint-fix:
+	poetry run ruff check --fix .
+	poetry run ruff format .
 
 format:
-	ruff format .
-
-# Docker commands
-docker-up:
-	tmux kill-session -t postgres 2>/dev/null || true
-	tmux new-session -d -s postgres
-	tmux send-keys -t postgres "docker-compose up" C-m
-
-docker-down:
-	docker-compose down
-	tmux kill-session -t postgres 2>/dev/null || true
-
-docker-logs:
-	docker-compose logs -f postgres
-
-docker-shell:
-	docker-compose exec postgres psql -U postgres -d postgres
+	poetry run ruff format .
 
 # Database commands
 migrate-db:
 	@echo "Creating database schema..."
-	test-env migrate-db
+	poetry run python3 src/test_env migrate-db
 
 populate-db:
 	@echo "Populating database with test data..."
-	tmux kill-session -t populate-db 2>/dev/null || true
-	tmux new-session -d -s populate-db
-	tmux send-keys -t populate-db "uv run python3 ./src/test_env populate-db" C-m
+	poetry run python3 src/test_env populate-db
 
 bench-db:
 	@echo "Running database benchmarks..."
-	test-env bench-db
+	poetry run python3 src/test_env bench-db
 
 # Cleanup
 clean:

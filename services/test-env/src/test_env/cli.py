@@ -1,50 +1,60 @@
 import click
-from .core import example_function
+import structlog
+import asyncio
+from functools import wraps
 from .db import create_schema, populate_database, run_benchmark_queries
+
+logger = structlog.get_logger()
+
+
+def coro(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        return asyncio.run(f(*args, **kwargs))
+
+    return wrapper
+
 
 @click.group()
 def main():
     """test-env CLI application."""
     pass
 
-@main.command()
-@click.option('--name', '-n', default='World',
-              help='Name to greet')
-def hello(name):
-    """Say hello to someone."""
-    click.echo(f"Hello, {name}!")
 
 @main.command()
-def example():
-    """Run an example function."""
-    result = example_function()
-    click.echo(f"Example function result: {result}")
-
-@main.command()
-def migrate_db():
+@coro
+async def migrate_db():
     """Create the database schema with complex financial tables and views."""
     try:
-        create_schema()
+        logger.info("migrating schema")
+        await create_schema()
         click.echo("Successfully created database schema!")
     except Exception as e:
         click.echo(f"Error creating database schema: {str(e)}", err=True)
 
+
 @main.command()
-@click.option('--size', '-s', default=100,
-              help='Target size in MB for the database population')
-def populate_db(size):
+@coro
+@click.option(
+    "--size", "-s", default=100, help="Target size in MB for the database population"
+)
+async def populate_db(size):
     """Populate the database with random financial data."""
     try:
-        populate_database(size)
-        click.echo(f"Successfully populated database with approximately {size}MB of data!")
+        await populate_database(size)
+        click.echo(
+            f"Successfully populated database with approximately {size}MB of data!"
+        )
     except Exception as e:
         click.echo(f"Error populating database: {str(e)}", err=True)
 
+
 @main.command()
-def bench_db():
+@coro
+async def bench_db():
     """Run various complex queries to benchmark the database."""
     try:
-        results = run_benchmark_queries()
+        results = await run_benchmark_queries()
         click.echo("\nBenchmark Results:")
         click.echo("-" * 50)
         for result in results:
@@ -54,5 +64,6 @@ def bench_db():
     except Exception as e:
         click.echo(f"Error running benchmark queries: {str(e)}", err=True)
 
-if __name__ == '__main__':
-    main() 
+
+if __name__ == "__main__":
+    main()
