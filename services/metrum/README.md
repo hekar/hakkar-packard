@@ -1,106 +1,79 @@
-# Metrum Service
+# Metrum Query System
 
-A CLI tool with HTTP and WebSocket client capabilities and PostgreSQL log reading.
+Metrum is a PostgreSQL monitoring and analysis tool. This repository contains the Metrum query system, which provides functionality for analyzing and caching SQL queries.
 
-## Requirements
+## Features
 
-- Python 3.9+
-- Poetry
-- dbmate (for database migrations)
+- Parse and analyze SQL queries (SELECT, UPDATE, DELETE, MERGE)
+- Extract query metadata (tables, views, WHERE clause AST)
+- Cache queries in SQLite for tracking and analysis
+- Track whether queries have been sent to the server
 
 ## Installation
 
-1. Install Poetry if you haven't already:
 ```bash
-curl -sSL https://install.python-poetry.org | python3 -
+# Clone the repository
+git clone https://github.com/yourusername/metrum.git
+cd metrum
+
+# Install dependencies
+pip install -r requirements.txt
 ```
-
-2. Install dependencies:
-```bash
-poetry install
-```
-
-## Configuration
-
-The service can be configured using environment variables or a `.env` file:
-
-- `METRUM_DATABASE_URL`: SQLite database URL (default: `sqlite:///metrum.db`)
-- `METRUM_BASE_URL`: Base URL for HTTP requests
-- `METRUM_HTTP_TIMEOUT`: HTTP client timeout in seconds (default: 30.0)
-- `METRUM_WS_URL`: WebSocket server URL
-- `METRUM_WS_PING_INTERVAL`: WebSocket ping interval in seconds (default: 20.0)
-- `METRUM_LOG_MODE`: PostgreSQL logging mode (default: `filesystem`)
-- `METRUM_LOGS_DIR`: Directory containing PostgreSQL log files (default: `/workspaces/postgres-project/logs`)
-- `METRUM_LOG_PATTERN`: Pattern to match log files (default: `postgresql-*.log`)
 
 ## Usage
 
-### Initialize the Service
+### MetrumQuery
 
-```bash
-make metrum-init
-# or
-poetry run metrum init
+The `MetrumQuery` class provides functionality for parsing and analyzing SQL queries:
+
+```python
+from metrum.queries import MetrumQuery
+
+# Create a MetrumQuery instance from a query string
+query = MetrumQuery.from_query("SELECT * FROM users WHERE id = 1")
+
+# Access query metadata
+print(f"Query type: {query.query_type}")
+print(f"Query hash: {query.query_hash}")
+print(f"Tables: {query.tables}")
+print(f"Views: {query.views}")
+print(f"WHERE clause AST: {query.where_clause_ast}")
 ```
 
-This will:
-- Create necessary directories (including logs directory)
-- Initialize the SQLite database
-- Create a default `.env` file if it doesn't exist
-- Set up dbmate for migrations
+### MetrumQueryCache and MetrumQueryCacheDb
 
-### Run the Service
+The `MetrumQueryCache` and `MetrumQueryCacheDb` classes provide functionality for caching queries in SQLite:
 
-```bash
-make metrum-run
-# or
-poetry run metrum run
+```python
+from metrum.queries import MetrumQuery
+from metrum.db import MetrumQueryCacheDb
+
+# Create the database tables
+MetrumQueryCacheDb.create_tables()
+
+# Create a MetrumQuery instance
+query = MetrumQuery.from_query("SELECT * FROM users WHERE id = 1")
+
+# Add the query to the cache
+cache_entry = MetrumQueryCacheDb.add_query(query)
+
+# Retrieve the query from the cache
+retrieved = MetrumQueryCacheDb.get_query_by_hash(query.query_hash)
+
+# Update the sent_to_server flag
+MetrumQueryCacheDb.update_sent_to_server(query.query_hash, True)
+
+# Get all queries
+all_queries = MetrumQueryCacheDb.get_all_queries()
+
+# Get queries by type
+select_queries = MetrumQueryCacheDb.get_queries_by_type(QueryType.SELECT)
 ```
 
-### Reading PostgreSQL Logs
+## Example
 
-List available log files:
-```bash
-poetry run metrum logs list
-```
+See the `examples/query_example.py` file for a complete example of how to use the Metrum query system.
 
-Read logs:
-```bash
-# Read all logs
-poetry run metrum logs read
+## License
 
-# Follow logs in real-time
-poetry run metrum logs read --follow
-
-# Read logs since a specific time
-poetry run metrum logs read --since "2024-03-28 00:00:00"
-
-# Read logs between two timestamps
-poetry run metrum logs read --since "2024-03-28 00:00:00" --until "2024-03-28 23:59:59"
-```
-
-## Development
-
-The project uses:
-- `poetry` for dependency management
-- `pydantic` for settings management
-- `click` for CLI interface
-- `httpx` for HTTP client
-- `websockets` for WebSocket client
-- `sqlalchemy` for database ORM
-- `dbmate` for database migrations
-
-### Project Structure
-
-```
-metrum/
-├── metrum/
-│   ├── __init__.py
-│   ├── cli.py         # CLI commands
-│   ├── settings.py    # Configuration management
-│   ├── db.py         # Database setup
-│   ├── logs.py       # PostgreSQL log reader
-│   └── clients.py    # HTTP and WebSocket clients
-├── pyproject.toml    # Poetry configuration
-└── README.md        # This file
-``` 
+This project is licensed under the MIT License - see the LICENSE file for details. 

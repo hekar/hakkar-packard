@@ -9,7 +9,6 @@ help:
 	@echo "  make run          - Run the CLI application"
 	@echo "  make run-dev      - Run the CLI application in development mode"
 	@echo "  make run-ui       - Run the Streamlit UI for database management"
-	@echo "  make clean        - Clean build artifacts"
 	@echo "  make venv         - Create virtual environment"
 	@echo "  make install      - Install the package"
 	@echo "  make dev-install  - Install development dependencies"
@@ -42,7 +41,7 @@ run:
 
 run-ui:
 	@echo "Starting Streamlit UI..."
-	poetry run streamlit run src/test_env/app.py --server.port 8501
+	poetry run streamlit run src/test_env/ui/app.py --server.port 8501
 
 # Development tools
 lint:
@@ -68,18 +67,3 @@ populate-db:
 bench-db:
 	@echo "Running database benchmarks..."
 	poetry run python3 src/test_env bench-db
-
-# Cleanup
-clean:
-	rm -rf build/
-	rm -rf dist/
-	rm -rf *.egg-info/
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
-	find . -type f -name "*.pyo" -delete
-	find . -type f -name "*.pyd" -delete
-	find . -type f -name ".coverage" -delete
-	find . -type d -name "*.egg-info" -exec rm -rf {} +
-	find . -type d -name "*.egg" -exec rm -rf {} +
-	find . -type d -name ".pytest_cache" -exec rm -rf {} +
-	find . -type d -name ".ruff_cache" -exec rm -rf {} + 

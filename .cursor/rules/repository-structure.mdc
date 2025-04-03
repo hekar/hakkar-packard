@@ -26,12 +26,18 @@ Key configuration files include:
 ## services
 The `services/` directory contain the following three subdirectories: 
 1. `db/`
-2. `server/`
-3. `ui/`
+2. `metrum/`
+3. `server/`
+4. `ui/`
 
 ### DB
 
 The `db/` directory contains the dbmate-powered migrations and auto-generated schema.sql for reference. The dbmate commands are defined in the @Makefile.
+
+### Metrum
+
+The `metrum/` directory contains our cli application that parses logs and metrics from a postgres server and sends the statistics and parsed queries to the server
+
 
 ### Server
 

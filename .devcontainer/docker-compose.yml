@@ -39,6 +39,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
+      PUID: 1000
+      PGID: 1000
     ports:
       - "5433:5433"
     command: ['postgres', '-c', 'config_file=/etc/postgresql/postgresql.conf']
@@ -53,6 +55,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    user: "1000:1000"
 
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.0

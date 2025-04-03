@@ -1,58 +1,13 @@
-from pathlib import Path
-from typing import Optional, Literal
+import os
+from dotenv import load_dotenv
 
-from pydantic import Field, DirectoryPath
-from pydantic_settings import BaseSettings, SettingsConfigDict
+# Load environment variables from .env file
+load_dotenv()
 
+# Database settings
+database_url = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/metrum")
 
-class Settings(BaseSettings):
-    """Application settings."""
-    
-    # Database settings
-    database_url: str = Field(
-        default="sqlite:///metrum.db",
-        description="Database URL for SQLite"
-    )
-    
-    # HTTP Client settings
-    http_timeout: float = Field(
-        default=30.0,
-        description="HTTP client timeout in seconds"
-    )
-    base_url: Optional[str] = Field(
-        default=None,
-        description="Base URL for HTTP requests"
-    )
-    
-    # WebSocket settings
-    ws_url: Optional[str] = Field(
-        default=None,
-        description="WebSocket server URL"
-    )
-    ws_ping_interval: float = Field(
-        default=20.0,
-        description="WebSocket ping interval in seconds"
-    )
-
-    # PostgreSQL Log settings
-    log_mode: Literal["filesystem", "csvlog", "syslog"] = Field(
-        default="filesystem",
-        description="PostgreSQL logging mode"
-    )
-    logs_dir: DirectoryPath = Field(
-        default=Path("/workspaces/postgres-project/logs"),
-        description="Directory containing PostgreSQL log files"
-    )
-    log_pattern: str = Field(
-        default="postgresql-*.log",
-        description="Pattern to match log files"
-    )
-    
-    model_config = SettingsConfigDict(
-        env_prefix="METRUM_",
-        env_file=".env",
-        env_file_encoding="utf-8",
-        case_sensitive=False,
-    )
-
-settings = Settings() 
+# Log monitor settings
+default_poll_interval = float(os.getenv("LOG_MONITOR_POLL_INTERVAL", "1.0"))
+default_http_endpoint = os.getenv("LOG_MONITOR_HTTP_ENDPOINT", "http://localhost:8000/api/events")
+default_patterns_file = os.getenv("LOG_MONITOR_PATTERNS_FILE", "metrum/config/patterns.json") 

@@ -1,0 +1,42 @@
+{
+  "slow_query": {
+    "query_pattern": "SELECT.*FROM.*WHERE.*",
+    "description": "Slow SELECT queries"
+  },
+  "insert_query": {
+    "query_pattern": "INSERT INTO.*",
+    "description": "INSERT queries"
+  },
+  "update_query": {
+    "query_pattern": "UPDATE.*SET.*WHERE.*",
+    "description": "UPDATE queries"
+  },
+  "delete_query": {
+    "query_pattern": "DELETE FROM.*WHERE.*",
+    "description": "DELETE queries"
+  },
+  "create_table": {
+    "query_pattern": "CREATE TABLE.*",
+    "description": "CREATE TABLE statements"
+  },
+  "alter_table": {
+    "query_pattern": "ALTER TABLE.*",
+    "description": "ALTER TABLE statements"
+  },
+  "create_index": {
+    "query_pattern": "CREATE INDEX.*",
+    "description": "CREATE INDEX statements"
+  },
+  "drop_table": {
+    "query_pattern": "DROP TABLE.*",
+    "description": "DROP TABLE statements"
+  },
+  "vacuum": {
+    "query_pattern": "VACUUM.*",
+    "description": "VACUUM operations"
+  },
+  "analyze": {
+    "query_pattern": "ANALYZE.*",
+    "description": "ANALYZE operations"
+  }
+} 
