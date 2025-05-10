@@ -1,6 +1,6 @@
 """Database models and utilities for Metrum."""
 
-from .base import Base, get_db
-from .models import Event, EventStatus
+from metrum.db.base import Base, get_db, get_connection
+from metrum.db.models import Event, EventStatus
 
-__all__ = ["Base", "get_db", "Event", "EventStatus"] 
+__all__ = ["Base", "get_db", "get_connection", "Event", "EventStatus"] 

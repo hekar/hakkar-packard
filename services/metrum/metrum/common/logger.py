@@ -39,5 +39,6 @@ configure_logger()
 
 # Create a logger instance
 logger = structlog.get_logger()
+logger.info('initialized logger')
 
 __all__ = ["logger"] 

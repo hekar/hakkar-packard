@@ -1,5 +1,5 @@
 """Application settings for Metrum."""
 
-from .config import Settings, settings
+from metrum.settings.config import Settings, settings
 
 __all__ = ["Settings", "settings"] 

@@ -17,6 +17,7 @@ ruff = "^0.11.2"
 structlog = "^25.2.0"
 requests = "^2.32.3"
 sqlparse = "^0.5.3"
+psycopg = "^3.2.7"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"

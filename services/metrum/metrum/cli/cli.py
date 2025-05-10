@@ -1,9 +1,9 @@
 import click
 
-from .cli_db import db
-from .cli_run import run
-from .cli_init import init
-from .cli_logs import logs
+from metrum.cli.cli_db import db
+from metrum.cli.cli_run import run
+from metrum.cli.cli_init import init
+from metrum.cli.cli_logs import logs
 
 
 @click.group()

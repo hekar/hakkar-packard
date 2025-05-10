@@ -26,7 +26,6 @@ from .analytics import (
     get_customer_portfolio,
     get_transaction_analytics,
 )
-from .utils import read_sql_file
 
 __all__ = [
     "get_connection",

@@ -3,7 +3,6 @@ import subprocess
 from pathlib import Path
 
 import click
-import json
 from metrum.common.logger import logger
 from metrum.settings import settings
 

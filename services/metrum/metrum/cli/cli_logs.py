@@ -3,12 +3,10 @@ from datetime import datetime
 from typing import Optional
 from pathlib import Path
 import click
-import json
-import os
 
 import structlog
 
-from metrum.logs import LogReader
+from metrum.collector.log_reader import create_log_reader
 from metrum.settings import settings
 from metrum.common.logger import logger
 
@@ -53,7 +51,7 @@ def read(
         click.echo(error_msg, err=True)
         return
 
-    reader = LogReader()
+    reader = create_log_reader()
     
     try:
         # Run the async log reader in the event loop
@@ -79,24 +77,24 @@ def read(
 def list():
     """List available log files."""
     logger.debug("listing_log_files")
-    reader = LogReader()
-    try:
-        log_files = reader.get_log_files()
-        if not log_files:
-            logger.info("no_log_files_found")
-            click.echo("No log files found")
-            return
-        
-        logger.info("found_log_files", count=len(log_files))
-        click.echo("Available log files:")
-        for log_file in log_files:
-            size = log_file.stat().st_size
-            mtime = datetime.fromtimestamp(log_file.stat().st_mtime)
-            logger.debug("log_file_details",
-                        name=log_file.name,
-                        size=size,
-                        modified=mtime.isoformat())
-            click.echo(f"  {log_file.name} ({size/1024:.1f}KB, modified: {mtime})")
-    except Exception as e:
-        logger.error("error_listing_files", error=str(e), exc_info=True)
-        click.echo(f"Error: {e}", err=True) 
+    reader = create_log_reader(logs_dir=settings.logs_dir)
+    log_files = reader.get_log_files()
+    
+    if not log_files:
+        logger.info("no_log_files_found")
+        click.echo("No log files found.")
+        return
+    
+    logger.info("found_log_files", count=len(log_files))
+    click.echo("Available log files:")
+    for log_file in log_files:
+        size = log_file.stat().st_size
+        mtime = datetime.fromtimestamp(log_file.stat().st_mtime)
+        logger.debug("log_file_details",
+                    name=log_file.name,
+                    size=size,
+                    modified=mtime.isoformat())
+        click.echo(f"  {log_file.name} ({size/1024:.1f}KB, modified: {mtime})")
+
+if __name__ == '__main__':
+    logs() 

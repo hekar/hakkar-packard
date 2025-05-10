@@ -23,6 +23,31 @@
         "--repository",
         "."
       ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-context7"
+      ]
+    },
+    "eslint": {
+      "command": "npx",
+      "args": [
+        "eslint-lsp"
+      ]
+    },
+    "prettier": {
+      "command": "npx",
+      "args": [
+        "prettier-lsp"
+      ]
+    },
+    "typescript": {
+      "command": "npx",
+      "args": [
+        "typescript-language-server",
+        "--stdio"
+      ]
     }
   }
 }

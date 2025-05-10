@@ -167,6 +167,77 @@ if st.session_state.selected_db:
             transaction_stats = pd.DataFrame([stats["transaction_stats"]])
             st.dataframe(transaction_stats)
 
+            # Individual Table Statistics
+            st.write("Detailed Table Statistics")
+            individual_table_stats = pd.DataFrame(stats["individual_table_stats"])
+            
+            # Create tabs for different aspects of table statistics
+            tab1, tab2, tab3, tab4 = st.tabs(["Overview", "Scans", "Tuples", "Maintenance"])
+            
+            with tab1:
+                # Overview tab - show basic table metrics
+                overview_cols = ['table_name', 'n_live_tup', 'n_dead_tup', 'n_tup_ins', 'n_tup_upd', 'n_tup_del']
+                st.dataframe(individual_table_stats[overview_cols])
+                
+                # Create a bar chart for live tuples
+                fig = px.bar(
+                    individual_table_stats,
+                    x='table_name',
+                    y='n_live_tup',
+                    title='Live Tuples per Table',
+                    labels={'table_name': 'Table', 'n_live_tup': 'Number of Live Tuples'}
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            
+            with tab2:
+                # Scans tab - show scan statistics
+                scan_cols = ['table_name', 'seq_scan', 'seq_tup_read', 'idx_scan', 'idx_tup_fetch']
+                st.dataframe(individual_table_stats[scan_cols])
+                
+                # Create a bar chart for scan types
+                fig = px.bar(
+                    individual_table_stats,
+                    x='table_name',
+                    y=['seq_scan', 'idx_scan'],
+                    title='Scan Types per Table',
+                    labels={'table_name': 'Table', 'value': 'Number of Scans'},
+                    barmode='group'
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            
+            with tab3:
+                # Tuples tab - show tuple statistics
+                tuple_cols = ['table_name', 'n_tup_ins', 'n_tup_upd', 'n_tup_del', 'n_tup_hot_upd', 'n_tup_newpage_upd']
+                st.dataframe(individual_table_stats[tuple_cols])
+                
+                # Create a stacked bar chart for tuple operations
+                fig = px.bar(
+                    individual_table_stats,
+                    x='table_name',
+                    y=['n_tup_ins', 'n_tup_upd', 'n_tup_del'],
+                    title='Tuple Operations per Table',
+                    labels={'table_name': 'Table', 'value': 'Number of Operations'},
+                    barmode='stack'
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            
+            with tab4:
+                # Maintenance tab - show vacuum and analyze statistics
+                maintenance_cols = ['table_name', 'last_vacuum', 'last_autovacuum', 'last_analyze', 'last_autoanalyze',
+                                  'vacuum_count', 'autovacuum_count', 'analyze_count', 'autoanalyze_count']
+                st.dataframe(individual_table_stats[maintenance_cols])
+                
+                # Create a bar chart for maintenance operations
+                fig = px.bar(
+                    individual_table_stats,
+                    x='table_name',
+                    y=['vacuum_count', 'autovacuum_count', 'analyze_count', 'autoanalyze_count'],
+                    title='Maintenance Operations per Table',
+                    labels={'table_name': 'Table', 'value': 'Count'},
+                    barmode='group'
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
             # Table Statistics with Chart
             st.write("Table Sizes")
             tables_df = get_table_stats(db_name)

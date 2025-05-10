@@ -10,12 +10,6 @@ Here is our directory structure. At the top level, we have 3 main directories:
 2. infrastructure
 3. services
 
-## .devcontainer 
-This is the devcontainer setup from which we will be developing our application. The `.devcontainer/docker-compose.yml` has defined the following services that are started automatically: 
-- `app`: This is what vscode connects to and has our code. This is built based on the Dockerfile defined at `.devcontainer/Dockerfile`. It contains development tools including Python, Node.js, dbmate, and other utilities needed for development.
-- `db`: PostgreSQL database service that hosts multiple databases needed for the application, including the main application database and Keycloak database.
-- `keycloak`: Authentication service that provides identity and access management for the application.
-
 Key configuration files include:
 - `devcontainer.json`: Defines the VS Code development environment, extensions, ports to forward, and post-creation setup.
 - `Dockerfile`: Sets up the development container with Python, database clients, dbmate, pyenv, and NVM.
@@ -36,7 +30,7 @@ The `db/` directory contains the dbmate-powered migrations and auto-generated sc
 
 ### Metrum
 
-The `metrum/` directory contains our cli application that parses logs and metrics from a postgres server and sends the statistics and parsed queries to the server
+The `metrum/` directory contains our cli application that parses logs and metrics from a postgres server and sends the statistics and parsed queries to the server. use Poetry for this project. use `make run-metrum` to run the project. assume LOG_LEVEL=info
 
 
 ### Server

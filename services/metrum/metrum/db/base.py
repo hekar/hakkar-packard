@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String, DateTime, JSON, Enum
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 import enum
+from contextlib import contextmanager
 
 from metrum.settings import settings
 
@@ -39,4 +40,12 @@ def get_db():
     try:
         yield db
     finally:
-        db.close() 
+        db.close()
+
+@contextmanager
+def get_connection(db_name: str | None = None):
+    """Get raw connection for operations that need it."""
+    if db_name:
+    else:
+        with engine.connect() as conn:
+            yield conn 
